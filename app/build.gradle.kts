@@ -68,4 +68,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.coil.compose)
     implementation(libs.face.detection)
+    implementation(libs.kotlinx.coroutines.play.services)
 }

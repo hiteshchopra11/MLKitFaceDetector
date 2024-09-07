@@ -1,7 +1,12 @@
 package com.utility.facedetectionandroid
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,14 +24,22 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceContour
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.google.mlkit.vision.face.FaceLandmark
 import com.utility.facedetectionandroid.ui.theme.FaceDetectionAndroidTheme
+import java.io.IOException
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             FaceDetectionAndroidTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -41,12 +54,21 @@ class MainActivity : ComponentActivity() {
 fun ImageChooserScreen(modifier: Modifier) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
+    var buttonText by remember { mutableStateOf("Select Image") }
+
+    // Cache the loaded bitmap using remember so it doesn't get recomposed unnecessarily
+    val selectedBitmap by remember(imageUri) {
+        mutableStateOf(imageUri?.let { loadBitmapFromUri(context, it) })
+    }
 
     // Launcher for the image chooser
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         imageUri = uri
+        if (uri != null) {
+            buttonText = "Select Another Image"
+        }
     }
 
     Column(
@@ -58,26 +80,30 @@ fun ImageChooserScreen(modifier: Modifier) {
         Button(onClick = {
             imagePickerLauncher.launch("image/*")
         }) {
-            Text(text = "Select Image")
+            Text(text = buttonText)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Display selected image
-        imageUri?.let { uri ->
-            val painter = rememberAsyncImagePainter(
-                ImageRequest.Builder(LocalContext.current)
-                    .data(uri)
-                    .build()
-            )
-            Image(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 36.dp, horizontal = 10.dp),
-                painter = painter,
-                contentDescription = "Selected Image"
-            )
+        selectedBitmap?.let { bitmap ->
+            FaceDetectionScreen(bitmap = bitmap)
         }
+    }
+}
+
+// Function to load a bitmap from a Uri
+fun loadBitmapFromUri(context: android.content.Context, uri: Uri): Bitmap? {
+    return try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val source = ImageDecoder.createSource(context.contentResolver, uri)
+            ImageDecoder.decodeBitmap(source)
+        } else {
+            @Suppress("DEPRECATION")
+            MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 
