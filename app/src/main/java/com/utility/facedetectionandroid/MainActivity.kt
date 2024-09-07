@@ -6,11 +6,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -19,21 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.tooling.preview.Preview
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.face.FaceContour
-import com.google.mlkit.vision.face.FaceDetection
-import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.google.mlkit.vision.face.FaceLandmark
 import com.utility.facedetectionandroid.ui.theme.FaceDetectionAndroidTheme
-import java.io.IOException
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +46,12 @@ fun ImageChooserScreen(modifier: Modifier) {
 
     // Cache the loaded bitmap using remember so it doesn't get recomposed unnecessarily
     val selectedBitmap by remember(imageUri) {
-        mutableStateOf(imageUri?.let { loadBitmapFromUri(context, it) })
+        mutableStateOf(imageUri?.let {
+            loadBitmapFromUri(
+                context,
+                it
+            )
+        })
     }
 
     // Launcher for the image chooser
@@ -77,9 +70,12 @@ fun ImageChooserScreen(modifier: Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         // Button to trigger image chooser
-        Button(onClick = {
-            imagePickerLauncher.launch("image/*")
-        }) {
+        Button(
+            modifier = Modifier
+                .height(36.dp),
+            onClick = {
+                imagePickerLauncher.launch("image/*")
+            }) {
             Text(text = buttonText)
         }
 
