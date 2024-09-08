@@ -208,6 +208,13 @@ fun drawBoundingBoxesOnFaces(
     val textPaint = Paint().apply {
         color = Color.WHITE
         textSize = 50f
+        textAlign = Paint.Align.LEFT
+    }
+
+    val overlayPaint = Paint().apply {
+        color = Color.BLACK
+        alpha = 150 // Adjust opacity here (0-255)
+        style = Paint.Style.FILL
     }
 
     for (face in faces) {
@@ -215,11 +222,23 @@ fun drawBoundingBoxesOnFaces(
         canvas.drawRect(bounds, paint)
 
         val boxHeight = bounds.height()
-        textPaint.textSize = boxHeight * 0.15f
+        textPaint.textSize = boxHeight * 0.30f
 
         val name = faceNames[face.trackingId ?: face.hashCode()]
 
         if (!name.isNullOrEmpty()) {
+            // Calculate text width
+            val textWidth = textPaint.measureText(name)
+
+            // Create a small opaque overlay behind the text
+            val overlayLeft = bounds.left.toFloat()
+            val overlayTop = bounds.top.toFloat() - textPaint.textSize - 10
+            val overlayRight = overlayLeft + textWidth
+            val overlayBottom = overlayTop + textPaint.textSize + 10
+
+            canvas.drawRect(overlayLeft, overlayTop, overlayRight, overlayBottom, overlayPaint)
+
+            // Draw the text on top of the overlay
             canvas.drawText(name, bounds.left.toFloat(), bounds.top.toFloat() - 10, textPaint)
         }
     }
