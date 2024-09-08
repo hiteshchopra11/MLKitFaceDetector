@@ -69,4 +69,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.face.detection)
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.material.icons.extended)
 }

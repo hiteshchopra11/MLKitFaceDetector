@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">FaceDetectionAndroid</string>
+    <string name="face_detection_app">Face Detection App</string>
+    <string name="select_image">Select Image</string>
+    <string name="select_another_image">Select Another Image</string>
+    <string name="view_saved_images">View Saved Images</string>
+    <string name="please_click_on_select_image_to_proceed">Please click on Select Image to Proceed</string>
+    <string name="image_content_description">Image</string>
+    <string name="assign_name">Assign Name</string>
+    <string name="enter_name_for_the_selected_face">Enter name for the selected face:</string>
+    <string name="name">Name</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="close">Close</string>
 </resources>
