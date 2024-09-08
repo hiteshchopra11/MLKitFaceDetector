@@ -52,3 +52,5 @@ This project is a complete Android application that scans a user’s photo galle
 
 - **GitHub Repository:** The project is available on GitHub, including all source code and configuration files.
 - **Demo Recording:** A screen recording demonstrating the app’s functionality, including image scanning, face detection, tagging, and saving, is attached.
+
+https://github.com/user-attachments/assets/01ae4d60-6500-4d60-9476-32df3515a786
